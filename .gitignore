@@ -1,7 +1,9 @@
 *.class
 /.settings
+/.resources
 /bin
 .classpath
+*.properties
 .project
 /data
 /Libs
