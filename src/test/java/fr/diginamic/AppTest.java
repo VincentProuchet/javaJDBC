@@ -1,7 +1,9 @@
 package fr.diginamic;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -11,14 +13,30 @@ import org.junit.Test;
  */
 public class AppTest 
 {
-    /**
-     * Rigorous Test :-)
+    /** Teste 
+     * les paramètres de connexion 
+     * 	si la base de données est joignable
+     * 	si les dépendances sont correctement paramétrées
+     * 
      * @throws SQLException 
      */
     @Test
-    public void shouldAnswerWithTrue() throws SQLException
+    public void testDatabase() throws SQLException
     {
-        assertTrue(App.createConnection() );
+        assertTrue(App.testConnection() );
         App.getConnection().close();
+    }
+    /**Teste la fonction de requête en lecture à la base de données
+     * 
+     * @throws SQLException
+     */
+    @Test
+    public void testlecture() throws SQLException
+    {
+    	ResultSet results = App.requeteLit(App.FIND_ALL_ARTICLES); 
+        assertNotNull( results);
+    	
+    	while(results.next())
+        System.out.println(results.getString("DESIGNATION") );
     }
 }
