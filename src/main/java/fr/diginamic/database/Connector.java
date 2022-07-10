@@ -1,6 +1,5 @@
 package fr.diginamic.database;
 
-import java.awt.geom.AffineTransform;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,30 +15,26 @@ public class Connector {
 	/** connection */
 	private Connection connection;
 
-	
 	/** DB_URL */
 	private final String DB_URL;
 	/** DB_USER */
 	private final String DB_USER;
 	/** DB_PWD */
 	private final String DB_PWD;
-	/** requéte  SELECT * FROM article */
-	public static final String FIND_ALL_ARTICLES = "SELECT * FROM article";
-	/** UPDATE article SET article.DESIGNATION = UPPER(article.DESIGNATION) */
-	public static final String UPDATE_TO_UPPER_CASE = "UPDATE article SET article.DESIGNATION = UPPER(article.DESIGNATION)";
-	/** UPDATE article SET article.DESIGNATION = LOWER(article.DESIGNATION) */
-	public static final String UPDATE_TO_LOWER_CASE = "UPDATE article SET article.DESIGNATION = LOWER(article.DESIGNATION)";
+
 	
-	
-	
-	/** SEPARATE_LOGS  avec ______________________________________________________*/
+
+	////////////////////////////////////////////////////////
+	/** SEPARATE_LOGS avec ______________________________________________________ */
 	public static final String SEPARATE_LOGS = "______________________________________________________";
 	// ce bloc est exécuté dés le chargement de la classe
 	static {
 
 	}
 
-	/** Constructeur
+	/**
+	 * Constructeur
+	 * 
 	 * @param dbResourceFileName
 	 */
 	public Connector(String dbResourceFileName) {
@@ -64,8 +59,7 @@ public class Connector {
 
 	/**
 	 * Pour test de connexion Permet de tester tous nouveaux paramètre ou la réponse
-	 * d'un base de données
-	 * attention la connection n'est pas fermée
+	 * d'un base de données attention la connection n'est pas fermée
 	 * 
 	 * @return true si une connexion valide et établie
 	 */
@@ -107,22 +101,20 @@ public class Connector {
 		return results;
 
 	}
+
 	/**
-	 * execute la requête passé en paramètre
-	 * connexion échoue
+	 * execute la requête passé en paramètre connexion échoue
 	 * 
 	 * @param requete
 	 * @return nombre d'enregistrement affectés -1 si la requéte echoue
 	 */
 	public int requeteUpdate(String requete) {
-		int results = -1; 
+		int results = -1;
 		try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PWD);
-				Statement thatStatement = connection.createStatement();
-				  ) {
-			results = thatStatement.executeUpdate(requete);			
+				Statement thatStatement = connection.createStatement();) {
+			results = thatStatement.executeUpdate(requete);
 			connection.close();
 			thatStatement.close();
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -134,6 +126,32 @@ public class Connector {
 		return results;
 
 	}
-
+	
+	/**Forme une requête like avec la requête passé en paramètre 
+	 * et ce qui pourrait être un entrée utilisateur
+	 * retire les espaces inutiles retire tous caractères non alphanumériques
+	 * 
+	 * @param likerequest requête like 
+	 * @param userEntry texte de recherche
+	 * @return String une requête Like formé avec l'entrée utilisateur filtrée et les quotes placés autour.
+	 */
+	public String formTheLikeRequest(String likerequest, String userEntry) {
+		userEntry = userEntry.toLowerCase().replaceAll("['`\"]", "#");;
+				
+		userEntry = userEntry.replaceAll("[^aàâäãbcdeéèêëfghiîïjklmnñoôöõpqrstuûüvwxyz][^0-9]", "#");
+		while(userEntry.contains("##")  ){
+			userEntry = userEntry.replace("##", "#");
+		}
+		userEntry =userEntry.replace("#"," ").strip().replace(" ", "%");
+		
+		return new StringBuilder().append(likerequest)
+									.append("'%")
+									.append(userEntry)
+									.append("%')")
+									.toString();
+		
+		
+		
+	}
 
 }
