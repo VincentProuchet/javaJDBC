@@ -13,30 +13,10 @@ import org.junit.Test;
  */
 public class AppTest 
 {
-    /** Teste 
-     * les paramètres de connexion 
-     * 	si la base de données est joignable
-     * 	si les dépendances sont correctement paramétrées
-     * 
-     * @throws SQLException 
-     */
-    @Test
+     @Test
     public void testDatabase() throws SQLException
     {
-        assertTrue(App.testConnection() );
-        App.getConnection().close();
+       assertTrue(true);
     }
-    /**Teste la fonction de requête en lecture à la base de données
-     * 
-     * @throws SQLException
-     */
-    @Test
-    public void testlecture() throws SQLException
-    {
-    	ResultSet results = App.requeteLit(App.FIND_ALL_ARTICLES); 
-        assertNotNull( results);
-    	
-    	while(results.next())
-        System.out.println(results.getString("DESIGNATION") );
-    }
+   
 }
