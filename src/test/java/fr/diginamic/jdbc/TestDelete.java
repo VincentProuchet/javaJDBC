@@ -1,15 +1,14 @@
 package fr.diginamic.jdbc;
 
-import static org.hamcrest.CoreMatchers.describedAs;
-
-import fr.diginamic.database.Connector;
+import fr.diginamic.jdbc.dao.FournisseurDaoJdbc;
+import fr.diginamic.jdbc.entities.Fournisseur;
 
 public class TestDelete {
 
 	public static void main(String[] args) {
-	 String delete = "DELETE fournisseur FROM fournisseur WHERE LOWER(fournisseur.NOM) like LOWER('%"+"La Maison des Peintures" +"%')";
-	 Connector connect = new Connector("db");
-	 connect.requeteUpdate(delete);
+	Fournisseur fournisseur = new Fournisseur(10,"La Maison des Peintures");
+	FournisseurDaoJdbc  fournisseurJdbc= new FournisseurDaoJdbc();
+	fournisseurJdbc.delete(fournisseur);
 	}
 
 }

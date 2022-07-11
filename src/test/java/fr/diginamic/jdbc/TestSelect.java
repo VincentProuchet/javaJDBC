@@ -1,33 +1,22 @@
 package fr.diginamic.jdbc;
 
-import static org.hamcrest.CoreMatchers.containsString;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.naming.spi.DirStateFactory.Result;
-
-import fr.diginamic.database.Connector;
+import fr.diginamic.jdbc.Connector;
+import fr.diginamic.jdbc.dao.FournisseurDaoJdbc;
 import fr.diginamic.jdbc.entities.Fournisseur;
 
 public class TestSelect {
 	public static ArrayList<Fournisseur> fournisseurs = new ArrayList<>();
 	
 	public static void main(String[] args) throws SQLException {
-		Connector connect = new Connector("db");
-		
-		String requete = "SELECT * FROM fournisseur ";
-		
-		ResultSet set = connect.requeteRead(requete);
-		while (set.next()) {
-			fournisseurs.add(new Fournisseur(set.getInt("ID"),set.getString("NOM") ));
-			
-			
-		}
+		FournisseurDaoJdbc fDaoJdbc = new FournisseurDaoJdbc();
 		
 		
-		for (Fournisseur f: fournisseurs) {
+		
+		for (Fournisseur f: fDaoJdbc.extraire()) {
 			System.out.println(f);
 					
 		}

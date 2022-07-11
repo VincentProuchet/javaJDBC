@@ -1,13 +1,15 @@
 package fr.diginamic.jdbc;
 
-import fr.diginamic.database.Connector;
+import fr.diginamic.jdbc.dao.FournisseurDaoJdbc;
+import fr.diginamic.jdbc.entities.Fournisseur;
 
 public class TestInsertion {
 
 	public static void main(String[] args) {
-		Connector connect = new Connector("db");
-		String insert = "INSERT INTO FOURNISSEUR (NOM ) VALUES('"+    " La Maison de la Peinture "    +"')"; ;
-		connect.requeteUpdate(insert);
+		FournisseurDaoJdbc  fournisseurJdbc= new FournisseurDaoJdbc();
+		Fournisseur fournisseur = new Fournisseur(0, "La Maison de la Peinture");
+		fournisseurJdbc.insert(fournisseur);
+		
 	}
 	
 
