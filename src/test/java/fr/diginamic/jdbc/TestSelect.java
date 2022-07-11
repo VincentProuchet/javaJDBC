@@ -1,10 +1,8 @@
 package fr.diginamic.jdbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import fr.diginamic.jdbc.Connector;
 import fr.diginamic.jdbc.dao.FournisseurDaoJdbc;
 import fr.diginamic.jdbc.entities.Fournisseur;
 

@@ -1,6 +1,5 @@
 package fr.diginamic.jdbc;
 
-import fr.diginamic.jdbc.Connector;
 import fr.diginamic.jdbc.dao.FournisseurDaoJdbc;
 
 public class TestUpdate {

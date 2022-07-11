@@ -1,6 +1,5 @@
 package fr.diginamic.database;
 
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -40,7 +39,7 @@ public class testConnector {
 	@Test
 	public void testlecture() throws SQLException {
 		Connector connector = new Connector("db");
-		ResultSet results = connector.requeteRead(Article.FIND_ALL_ARTICLES);
+		ResultSet results = connector.Read(Article.FIND_ALL_ARTICLES);
 		assertNotNull(results);
 		StringBuilder st = null;
 		while (results.next()) {
@@ -59,9 +58,9 @@ public class testConnector {
 	public void testUpdate() throws SQLException {
 		int results = 0;
 		Connector connector = new Connector("db");
-		results = connector.requeteUpdate(Article.UPDATE_TO_UPPER_CASE);
+		results = connector.Update(Article.UPDATE_TO_UPPER_CASE);
 		assertTrue(results > 1);
-		results = connector.requeteUpdate(Article.UPDATE_TO_LOWER_CASE);
+		results = connector.Update(Article.UPDATE_TO_LOWER_CASE);
 		assertTrue(results > 1);
 
 	}

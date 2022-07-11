@@ -4,7 +4,7 @@ import java.util.List;
 
 import fr.diginamic.jdbc.entities.Fournisseur;
 
-public interface FournisseurDAO {
+public interface IFournisseurDAO {
 	
 		List<Fournisseur> extraire();
 		void insert(Fournisseur fournisseur);

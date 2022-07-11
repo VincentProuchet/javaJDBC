@@ -9,6 +9,7 @@ public class TestInsertion {
 		FournisseurDaoJdbc  fournisseurJdbc= new FournisseurDaoJdbc();
 		Fournisseur fournisseur = new Fournisseur(0, "La Maison de la Peinture");
 		fournisseurJdbc.insert(fournisseur);
+		fournisseurJdbc.insert(new Fournisseur(0, " L’Espace Création"));
 		
 	}
 	

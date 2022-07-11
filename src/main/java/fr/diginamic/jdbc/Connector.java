@@ -3,8 +3,12 @@ package fr.diginamic.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ResourceBundle;
+
+import fr.diginamic.jdbc.dao.IFournisseurDAO;
+import fr.diginamic.jdbc.enums.StoreMode;
 
 /**
  * @author Vincent
@@ -13,7 +17,7 @@ import java.util.ResourceBundle;
 public class Connector {
 
 	/** connection */
-	private Connection connection;
+	private Connection jdbcConnection =null;
 
 	/** DB_URL */
 	private static String DB_URL;
@@ -21,7 +25,7 @@ public class Connector {
 	private static String DB_USER;
 	/** DB_PWD */
 	private static String DB_PWD;
-
+	private static StoreMode STORE_MODE;
 	
 
 	////////////////////////////////////////////////////////
@@ -29,9 +33,12 @@ public class Connector {
 	public static final String SEPARATE_LOGS = "______________________________________________________";
 	// ce bloc est exécuté dés le chargement de la classe permet de ne charger  les données qu'une seule fois
 	static {
+				
 				// on recupére un .properties dans le répertoire resources
 				ResourceBundle dbProperties = ResourceBundle.getBundle("db");
-				// "jdbc:mariadb://localhost:3307/compta"
+				
+				STORE_MODE = StoreMode.valueOf(dbProperties.getString("store.mode"));
+				
 				DB_URL = "jdbc:" + dbProperties.getString("jdbc.db.type") + "://" + dbProperties.getString("jdbc.db.adress")
 						+ ":" + dbProperties.getString("jdbc.db.port") + "/" + dbProperties.getString("jdbc.db.name");
 				DB_USER = dbProperties.getString("jdbc.db.user");
@@ -47,7 +54,9 @@ public class Connector {
 	public Connector(String dbResourceFileName) {
 		// on recupére un .properties dans le répertoire resources
 				ResourceBundle dbProperties = ResourceBundle.getBundle(dbResourceFileName);
-				// "jdbc:mariadb://localhost:3307/compta"
+				
+				STORE_MODE = StoreMode.valueOf(dbProperties.getString("store.mode"));
+				
 				DB_URL = "jdbc:" + dbProperties.getString("jdbc.db.type") + "://" + dbProperties.getString("jdbc.db.adress")
 						+ ":" + dbProperties.getString("jdbc.db.port") + "/" + dbProperties.getString("jdbc.db.name");
 				DB_USER = dbProperties.getString("jdbc.db.user");
@@ -66,10 +75,31 @@ public class Connector {
 	 * Getter
 	 * 
 	 * @return the connection
+	 * @throws SQLException 
 	 */
-	public Connection getConnection() {
-		return this.connection;
+	public Connection getConnection() throws SQLException {
+		if (this.jdbcConnection== null) {
+			this.jdbcConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PWD);
+		}
+		return this.jdbcConnection;
 	}
+	/** ferme la connexion si elle existe
+	 * @throws SQLException
+	 */
+	public void close() throws SQLException {
+		if(this.jdbcConnection!=null && !this.jdbcConnection.isClosed()) {
+			this.jdbcConnection.close();
+		}
+
+	}
+	
+	public IFournisseurDAO getFournisseurDAO() {
+		return STORE_MODE.getFournisseurStore();
+		
+	}
+	
+	
+	
 
 	/**
 	 * Pour test de connexion Permet de tester tous nouveaux paramètre ou la réponse
@@ -78,9 +108,9 @@ public class Connector {
 	 * @return true si une connexion valide et établie
 	 */
 	public boolean testConnection() {
-		try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PWD);) {
-			this.connection = connection;
-			return connection.isValid(0);
+		try {
+			this.getConnection();
+			return this.jdbcConnection.isValid(0);
 
 		} catch (Exception e) {
 			System.err.println(e);
@@ -96,7 +126,7 @@ public class Connector {
 	 * @param requete
 	 * @return ResultSet ou null en cas d'echec
 	 */
-	public ResultSet requeteRead(String requete) {
+	public ResultSet Read(String requete) {
 		ResultSet results = null;
 		try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PWD);
 				Statement thatStatement = connection.createStatement();
@@ -122,7 +152,7 @@ public class Connector {
 	 * @param requete
 	 * @return nombre d'enregistrement affectés -1 si la requéte echoue
 	 */
-	public int requeteUpdate(String requete) {
+	public int Update(String requete) {
 		int results = -1;
 		try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PWD);
 				Statement thatStatement = connection.createStatement();) {
@@ -149,7 +179,7 @@ public class Connector {
 	 * @param userEntry texte de recherche
 	 * @return String une requête Like formé avec l'entrée utilisateur filtrée et les quotes placés autour.
 	 */
-	public String formTheLikeRequest(String likerequest, String userEntry) {
+	public String CleanUserEntry( String userEntry) {
 		userEntry = userEntry.toLowerCase().replaceAll("['`\"]", "#");;
 				
 		userEntry = userEntry.replaceAll("[^aàâäãbcdeéèêëfghiîïjklmnñoôöõpqrstuûüvwxyz][^0-9]", "#");
@@ -157,9 +187,8 @@ public class Connector {
 			userEntry = userEntry.replace("##", "#");
 		}
 		userEntry =userEntry.replace("#"," ").strip().replace(" ", "%");
-		
-		return new StringBuilder().append(likerequest)
-									.append("'%")
+		System.out.println(userEntry);
+		return new StringBuilder()	.append("'%")
 									.append(userEntry)
 									.append("%')")
 									.toString();
