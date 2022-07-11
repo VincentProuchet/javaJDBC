@@ -1,4 +1,4 @@
-package fr.diginamic.database;
+package fr.diginamic.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,19 +16,26 @@ public class Connector {
 	private Connection connection;
 
 	/** DB_URL */
-	private final String DB_URL;
+	private static String DB_URL;
 	/** DB_USER */
-	private final String DB_USER;
+	private static String DB_USER;
 	/** DB_PWD */
-	private final String DB_PWD;
+	private static String DB_PWD;
 
 	
 
 	////////////////////////////////////////////////////////
 	/** SEPARATE_LOGS avec ______________________________________________________ */
 	public static final String SEPARATE_LOGS = "______________________________________________________";
-	// ce bloc est exécuté dés le chargement de la classe
+	// ce bloc est exécuté dés le chargement de la classe permet de ne charger  les données qu'une seule fois
 	static {
+				// on recupére un .properties dans le répertoire resources
+				ResourceBundle dbProperties = ResourceBundle.getBundle("db");
+				// "jdbc:mariadb://localhost:3307/compta"
+				DB_URL = "jdbc:" + dbProperties.getString("jdbc.db.type") + "://" + dbProperties.getString("jdbc.db.adress")
+						+ ":" + dbProperties.getString("jdbc.db.port") + "/" + dbProperties.getString("jdbc.db.name");
+				DB_USER = dbProperties.getString("jdbc.db.user");
+				DB_PWD = dbProperties.getString("jdbc.db.password");
 
 	}
 
@@ -39,13 +46,20 @@ public class Connector {
 	 */
 	public Connector(String dbResourceFileName) {
 		// on recupére un .properties dans le répertoire resources
-		ResourceBundle dbProperties = ResourceBundle.getBundle(dbResourceFileName);
-		// "jdbc:mariadb://localhost:3307/compta"
-		DB_URL = "jdbc:" + dbProperties.getString("jdbc.db.type") + "://" + dbProperties.getString("jdbc.db.adress")
-				+ ":" + dbProperties.getString("jdbc.db.port") + "/" + dbProperties.getString("jdbc.db.name");
-		DB_USER = dbProperties.getString("jdbc.db.user");
-		DB_PWD = dbProperties.getString("jdbc.db.password");
+				ResourceBundle dbProperties = ResourceBundle.getBundle(dbResourceFileName);
+				// "jdbc:mariadb://localhost:3307/compta"
+				DB_URL = "jdbc:" + dbProperties.getString("jdbc.db.type") + "://" + dbProperties.getString("jdbc.db.adress")
+						+ ":" + dbProperties.getString("jdbc.db.port") + "/" + dbProperties.getString("jdbc.db.name");
+				DB_USER = dbProperties.getString("jdbc.db.user");
+				DB_PWD = dbProperties.getString("jdbc.db.password");
 
+	}
+	/** Constructeur
+	 * créer une version rapide du connector
+	 * permet de ne pas recharger les données chaque fois que l'on vas créer un nouvelle version de l'instance
+	 */
+	public Connector() {
+		
 	}
 
 	/**
@@ -80,7 +94,7 @@ public class Connector {
 	 * connexion échoue
 	 * 
 	 * @param requete
-	 * @return
+	 * @return ResultSet ou null en cas d'echec
 	 */
 	public ResultSet requeteRead(String requete) {
 		ResultSet results = null;

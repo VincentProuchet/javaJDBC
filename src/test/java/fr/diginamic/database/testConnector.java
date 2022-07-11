@@ -9,7 +9,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import fr.diginamic.entities.Article;
+import fr.diginamic.jdbc.Connector;
+import fr.diginamic.jdbc.entities.Article;
 
 /**
  * Test la classe de connection à un base de données
