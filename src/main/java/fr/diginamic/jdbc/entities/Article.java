@@ -1,4 +1,4 @@
-package fr.diginamic.entities;
+package fr.diginamic.jdbc.entities;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,6 +42,8 @@ public class Article {
 	public static final String UPDATE_TO_UPPER_CASE = "UPDATE article SET article.DESIGNATION = UPPER(article.DESIGNATION)";
 	/** UPDATE article SET article.DESIGNATION = LOWER(article.DESIGNATION) */
 	public static final String UPDATE_TO_LOWER_CASE = "UPDATE article SET article.DESIGNATION = LOWER(article.DESIGNATION)";
+	/** UPDATE article SET article.DESIGNATION = ' */
+	public static final String UPDATE_DESIGNATION = "UPDATE article SET article.DESIGNATION = '";
 
 	/** INSERT INTO ARTICLE (ID,REF,DESIGNATION,PRIX,ID_FOU) VALUES( */
 	public static final String INSERT_THIS_ARTICLE = "INSERT INTO ARTICLE (ID,REF,DESIGNATION,PRIX,ID_FOU ) VALUES( ";
@@ -155,6 +157,36 @@ public class Article {
 					.append("  ").append(this.idFournisseur)
 					.toString()
 					;
+	}
+	
+	/**forme une requete d'inssertion pour un Article 
+	 * dans une base de données 
+	 * 
+	 * @return INSERT INTO ARTICLE (ID,REF,DESIGNATION,PRIX,ID_FOU) 
+	 * 								VALUES(
+	 */
+	public String getInsertStatement() {
+		return new StringBuilder(INSERT_THIS_ARTICLE)
+				.append(this.id)
+				.append(",'").append(this.referenceString).append("'")
+				.append(",'").append(this.designationString).append("'")
+				.append(",").append(this.prix)
+				.append(",").append(this.idFournisseur)	
+				.append(")s")
+				.toString();
+		
+	}
+	/**
+	 * @param nouvelleDesignation
+	 * @return UPDATE article SET article.DESIGNATION = '
+	 */
+	public String updateDeignation(String nouvelleDesignation) {
+		return new StringBuilder(UPDATE_DESIGNATION)
+				.append(this.designationString)
+				.append("'")
+				.toString();
+		
+		
 	}
 
 }
